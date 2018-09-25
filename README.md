@@ -7,7 +7,7 @@ to read in a jpeg and print out width, height, and RGB values (one number per li
 # Dependencies
 
   - [libjpeg](http://libjpeg.sourceforge.net/)
-    - Install on Linux via: apt get install libjpeg-dev
+    - Install on Linux via: apt install libjpeg-dev
 
 # Usage
 

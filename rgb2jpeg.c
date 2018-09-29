@@ -41,7 +41,7 @@ int main(int argc, char **argv) {
 
 
   jpeg_set_defaults(&cinfo);
-  jpeg_set_quality(&cinfo, 100, TRUE);   // Quality = 10
+  jpeg_set_quality(&cinfo, 100, TRUE);   // Quality = 100
   jpeg_start_compress(&cinfo, TRUE);
 
   JSAMPROW row_pointer[1];

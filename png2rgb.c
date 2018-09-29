@@ -1,6 +1,6 @@
 #include <stdio.h> 
 #include <stdlib.h> 
-#include <libpng16/png.h> 
+#include <png.h> 
 
 #define MIN(x,y) ((x) < (y) ? (x) : (y))
 

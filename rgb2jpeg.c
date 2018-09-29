@@ -52,8 +52,8 @@ int main(int argc, char **argv) {
     unsigned char *row_rgbs = (unsigned char *)calloc(3*cinfo.image_width, sizeof(unsigned char));
     for (int i=0; i < cinfo.image_width * 3; i++) {
       int byte;
-      if (scanf("%d", &byte) != 1) {
-        fprintf(stderr,"Cannot read RGB value... \n");
+      if ((scanf("%d", &byte) != 1) || (byte < 0) || (byte > 255))  {
+        fprintf(stderr,"Invalid RGB value\n");
 	exit(1);
       }
       row_rgbs[i] = (unsigned char)(byte);

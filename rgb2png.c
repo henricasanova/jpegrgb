@@ -29,7 +29,6 @@ int main(int argc, char *argv[])
     exit(1);
   }
 
-  int code = 0;
   png_structp png_ptr = NULL;
   png_infop info_ptr = NULL;
   png_bytep row = NULL;
@@ -60,9 +59,6 @@ int main(int argc, char *argv[])
 
   png_write_info(png_ptr, info_ptr);
 
-  printf("WIDTH=%d\n", width);
-  printf("HEUGHT=%d\n", height);
-
   // Allocate memory for one row (3 bytes per pixel)
   png_bytep row_buffer = (png_bytep) malloc(3 * width * sizeof(png_byte));
 
@@ -70,7 +66,6 @@ int main(int argc, char *argv[])
   // Write image data
   for (int row=0; row < height; row++) {
       for (int col=0; col < width; col++) {
-         printf("row=%d, col=%d\n", row, col);
          int bytes[3];
          if ((scanf("%d", &(bytes[0])) != 1) || (bytes[0] < 0) || (bytes[0] > 255)  ||
              (scanf("%d", &(bytes[1])) != 1) || (bytes[1] < 0) || (bytes[1] > 255)  ||
@@ -78,7 +73,6 @@ int main(int argc, char *argv[])
            fprintf(stderr,"Invalid RGB value\n");
            exit(1); 
          }
-         fprintf(stdout, "%d %d %d\n", bytes[0], bytes[1], bytes[2]);
          row_buffer[col * 3 + 0] = (png_byte)(bytes[0]);
          row_buffer[col * 3 + 1] = (png_byte)(bytes[1]);
          row_buffer[col * 3 + 2] = (png_byte)(bytes[2]);

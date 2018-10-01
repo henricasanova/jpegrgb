@@ -18,13 +18,13 @@ unsigned short _rotl_short(unsigned short value, int shift) {
     return (value << shift) | (value >> (16 - shift));
 }
 
-unsigned short _rotl_byte(unsigned char value, int shift) {
+unsigned char _rotl_byte(unsigned char value, int shift) {
     if (shift == 8)
       return value;
     return (value << shift) | (value >> (8 - shift));
 }
 
-unsigned short _rotr_byte(unsigned char value, int shift) {
+unsigned char _rotr_byte(unsigned char value, int shift) {
     if (shift == 8)
       return value;
     return (value >> shift) | (value << (8 - shift));
@@ -174,17 +174,6 @@ int main(int argc, char **argv) {
 
   // Apply the scrambling/unscrambling
 
-  /*
-    321098765432109876543210
-    rrrrrrrrggggggggbbbbbbbb
-
-    rotate rrrrrrrrgggggggg 5 positions to the right
-    rotate bbbbbbbb 6 positions to the left
-
-     if 2nd bit of gggggggg == 0 then flip all bits in bbbbbbbb
-    if 3rd bit of bbbbbbbb == 0 then flip all bits in rrrrrrrr
-   */
-
   unsigned char **row_buffers = (unsigned char **)calloc(h, sizeof(unsigned char *));
   for (int i=0; i < h; i++) {
     row_buffers[i] = (unsigned char *)calloc(3*w, sizeof(unsigned char));
@@ -196,9 +185,9 @@ int main(int argc, char **argv) {
         unsigned char green = rows[row][col * bpp + 1];
         unsigned char blue  = rows[row][col * bpp + 2];
 
-        //printf("------------------------------------------\n");
-        //printf("r=%d g=%d b=%d\n",red, green, blue);
-        //print_binary("original ", (red << 16) + (green << 8) + blue);
+//        printf("------------------------------------------\n");
+//        printf("original r=%d g=%d b=%d\n",red, green, blue);
+//        print_binary("original ", (red << 16) + (green << 8) + blue);
 
         unsigned char target_red;
         unsigned char target_green;
@@ -206,46 +195,48 @@ int main(int argc, char **argv) {
   
         if (scramble) {
 
-          unsigned short rg = ((green) + (red << 8));
-          //print_binary("green+red ", (unsigned int)rg);
-          rg = _rotr_short(rg, 3);
-          //print_binary("rotate -> ", (unsigned int)rg);
-  
-          blue = _rotl_byte((unsigned char) blue, 6);
-          if (!(rg & 64)) {
-              blue = blue ^ 255;
-          }
-          if (!(blue & 32)) {
-              rg = rg ^ (255 << 8);
-          }
-          unsigned int threebytes = (rg << 8) + blue;
-  
-          target_red = (rg >> 8) & 255;
-          target_green = rg & 255;
-          target_blue = blue;
+          unsigned short us = (red << 8) + (blue);
+//          print_binary("Original us: ", (unsigned int)us);
+          us = (us << 5 ) | (us >> 11);
+ //         print_binary("Rotated us : ", (unsigned int)us);
+
+          unsigned int threebytes = (us << 8) + green;
+
+  //        print_binary("threebytes: ", threebytes);
+
+          threebytes = threebytes ^ (1513718 * col + 3151239 * row);
+
+   //       print_binary("scrambled threebytes: ", threebytes);
+
+          target_red = (threebytes >> 16) & 255;
+          target_green = (threebytes >> 8) & 255;
+          target_blue = threebytes & 255;
+
 
         } else {
-          // Apply the descrambling
-          if (!(blue & 32)) {
-              red = red ^ 255;
-          }
-          if (!(green & 64)) {
-              blue = blue ^ 255;
-          }
-          blue = _rotr_byte(blue, 6);
 
-          unsigned short rg = ((green) + (red << 8));
-          rg = _rotl_short(rg, 3);
+          unsigned int threebytes = (((unsigned short)red) << 16) + 
+                                    (((unsigned short)green) << 8) + blue;
 
-          target_red = (rg >> 8) & 255;
-          target_green = (rg) & 255;
-          target_blue = blue;
-          
+          threebytes = threebytes ^ (1513718 * col + 3151239 * row);
+
+    //      print_binary("descrambled threebytes: ", threebytes);
+
+          target_green = (threebytes) & 255;
+     //     print_binary("target green: ", (unsigned int)target_green);
+
+          unsigned short us = (threebytes >> 8);
+//          print_binary("I am getting: ", (unsigned int)us);
+          us = (us >> 5) | (us << 11);
+//          print_binary("recovered us:", (unsigned int) us);
+          target_blue = us & 255;
+          target_red = (us >> 8) & 255;
+
         }
 
-        unsigned int threebytes = ((unsigned int)target_red << 16) + ((unsigned int)target_green << 8) + (unsigned int)target_blue;
-        //print_binary("final: ",threebytes);
-        //printf("r=%d g=%d b=%d\n",target_red, target_green, target_blue);
+        unsigned int threebytes = ((unsigned int)(target_red) << 16) + ((unsigned int)(target_green) << 8) + (unsigned int)(target_blue);
+       // print_binary("final: ",threebytes);
+      //  printf("final: r=%d g=%d b=%d\n",target_red, target_green, target_blue);
 
         row_buffers[row][col * 3 + 0] = target_red;
         row_buffers[row][col * 3 + 1] = target_green;

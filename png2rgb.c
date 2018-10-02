@@ -8,9 +8,13 @@
 int main(int argc, char **argv) {
 
   unsigned int max_desired_width;
-  if ((argc != 3) || (sscanf(argv[2], "%u", &max_desired_width) != 1)) {
-    fprintf(stderr, "Usage: %s <png file path> <maximum width>\n", argv[0]);
+  if (!(((argc == 3) && (sscanf(argv[2], "%u", &max_desired_width) == 1)) || (argc == 2))) {
+    fprintf(stderr, "Usage: %s <png file path> [maximum width]\n", argv[0]);
     exit(1);
+  }
+
+  if (argc == 2) {
+      max_desired_width = 0;
   }
 
   FILE *infile = fopen(argv[1], "rb");
@@ -110,11 +114,22 @@ int main(int argc, char **argv) {
   png_destroy_read_struct(&png, &info, NULL);
 
   // Do the scaling
-  int desired_width = MIN(max_desired_width, w);
-  double aspect_ratio = (double)(w) / (double)(h);
-  int desired_height = (int)((double)(desired_width) / aspect_ratio);
-  int stride_width = (int)(w / desired_width);
-  int stride_height = (int)(h / desired_height);
+  int desired_width;
+  int desired_height;
+  int stride_width;
+  int stride_height;
+  if (max_desired_width > 0) {
+      double aspect_ratio = (double)(w) / (double)(h);
+      desired_width = MIN(max_desired_width, w);
+      desired_height = (int)((double)(desired_width) / aspect_ratio);
+      stride_width = (int)(w / desired_width);
+      stride_height = (int)(h / desired_height);
+  } else {
+      desired_width = w;
+      desired_height = h;
+      stride_width = 1;
+      stride_height = 1;
+  }
 
   desired_width = w / stride_width;
   desired_height = h / stride_height;

@@ -204,7 +204,7 @@ int main(int argc, char **argv) {
 
   //        print_binary("threebytes: ", threebytes);
 
-          threebytes = threebytes ^ (1513718 * col + 3151239 * row);
+          threebytes = threebytes ^ (101231 * col * col + 41231 * row * row );
 
    //       print_binary("scrambled threebytes: ", threebytes);
 
@@ -218,7 +218,7 @@ int main(int argc, char **argv) {
           unsigned int threebytes = (((unsigned short)red) << 16) + 
                                     (((unsigned short)green) << 8) + blue;
 
-          threebytes = threebytes ^ (1513718 * col + 3151239 * row);
+          threebytes = threebytes ^ (101231 * col * col + 41231 * row * row);
 
     //      print_binary("descrambled threebytes: ", threebytes);
 
@@ -236,7 +236,7 @@ int main(int argc, char **argv) {
 
         unsigned int threebytes = ((unsigned int)(target_red) << 16) + ((unsigned int)(target_green) << 8) + (unsigned int)(target_blue);
        // print_binary("final: ",threebytes);
-      //  printf("final: r=%d g=%d b=%d\n",target_red, target_green, target_blue);
+//        printf("final: r=%d g=%d b=%d\n",target_red, target_green, target_blue);
 
         row_buffers[row][col * 3 + 0] = target_red;
         row_buffers[row][col * 3 + 1] = target_green;

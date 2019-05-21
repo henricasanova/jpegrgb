@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
 {
   // Make sure that the output filename argument has been provided
   if (argc != 2) {
-    fprintf(stderr, "Usage: %s <jpg file path>\n", argv[0]);
+    fprintf(stderr, "Usage: %s <png file path>\n", argv[0]);
     exit(1);
   }
 

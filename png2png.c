@@ -198,15 +198,15 @@ int main(int argc, char **argv) {
           unsigned short us = (red << 8) + (blue);
 //          print_binary("Original us: ", (unsigned int)us);
           us = (us << 5 ) | (us >> 11);
- //         print_binary("Rotated us : ", (unsigned int)us);
+//         print_binary("Rotated us : ", (unsigned int)us);
 
           unsigned int threebytes = (us << 8) + green;
 
-  //        print_binary("threebytes: ", threebytes);
+//          print_binary("threebytes: ", threebytes);
 
           threebytes = threebytes ^ (101231 * col * col + 41231 * row * row );
 
-   //       print_binary("scrambled threebytes: ", threebytes);
+//          print_binary("scrambled threebytes: ", threebytes);
 
           target_red = (threebytes >> 16) & 255;
           target_green = (threebytes >> 8) & 255;
